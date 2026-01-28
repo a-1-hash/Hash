@@ -252,17 +252,11 @@ class ImplicitNetwork(nn.Module):
         dims = [d_in] + [width]*depth + [d_out]
         self.embed_fn = None
 
-
-        # bounding_box_scale=2.0 意味着它可以处理 [-2, 2] 范围内的坐标 (覆盖大多数人体尺寸)
         if use_hash_encoding:
-            # 使用 Hash Encoding
-            print("Injecting Hash Encoding into ImplicitNetwork...")
-            # bounding_box_scale=2.0 意味着它可以处理 [-2, 2] 范围内的坐标 (覆盖大多数人体尺寸)
             self.embed_fn = HashEmbedder(bounding_box_scale=1200.0, num_levels=16, level_dim=4)
             input_ch = self.embed_fn.output_dim
             dims[0] = input_ch
         elif multires > 0:
-            # 原有的 Positional Encoding 逻辑
             embed_fn, input_ch = get_embedder(multires)
             self.embed_fn = embed_fn
             dims[0] = input_ch
